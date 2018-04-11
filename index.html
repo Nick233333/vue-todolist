@@ -37,20 +37,20 @@
 						<ul class="list-group">
 							<li class="list-group-item" v-for="(todo, index) in todos">
 								<div v-if="todo.completed">
-									<del>{{ index + 1}}、{{ todo.title }} -- {{ todo.date }}</del>
+									<del>{{ todo.title }} -- {{ todo.date }}</del>
 									<button v-on:click="deleteTodo(index)" type="button" class="btn btn-sm btn-danger float-right" aria-label="Close">
   										<span aria-hidden="true">&times;</span>
   									</button>
-  									<button v-on:click="updateTodo(todo)" type="button" class="btn btn-sm btn-warning text-white float-right mr-2">
-  										<span aria-hidden="true">{{ todo.completed ? '未完成' : '已完成' }}</span>
+  									<button v-on:click="updateTodo(todo)" type="button" class="btn btn-sm btn-success text-white float-right mr-2">
+  										<span aria-hidden="true">{{ todo.completed ? '已完成' : '未完成' }}</span>
   									</button>
   								</div>
-								<div v-else>{{ index + 1}}、{{ todo.title }} -- {{ todo.date }}
+								<div v-else>{{ todo.title }} -- {{ todo.date }}
 									<button v-on:click="deleteTodo(index)" type="button" class="btn btn-sm btn-danger float-right" aria-label="Close">
   										<span aria-hidden="true">&times;</span>
   									</button>
-									<button v-on:click="updateTodo(todo)" type="button" class="btn btn-sm btn-success text-white float-right mr-2">
-  										<span aria-hidden="true">{{ todo.completed ? '未完成' : '已完成' }}</span>
+									<button v-on:click="updateTodo(todo)" type="button" class="btn btn-sm btn-warning text-white float-right mr-2">
+  										<span aria-hidden="true">{{ todo.completed ? '已完成' : '未完成' }}</span>
   									</button>
   								</div>
   							</li>
