@@ -6,16 +6,17 @@
 	<link href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-	<div class="container" id="app">
+	<div class="container mt-2" id="app">
 		<div class="row">
-			<div class="col-md-8 col-md-offset-2">
-				<div class="panel panel-default">
-					<div class="panel-body">
-						<h1>Vue tosolist</h1>
+			<div class="col-md-8 offset-md-2">
+				<div class="card">
+					<div class="card-header bg-primary text-white"><h1>Vue todolist</h1></div>
+					<div class="card-body">
+						
 						<ul class="list-group">
 							<li class="list-group-item" v-for="todo in todos">{{ todo.title }}</li>
 						</ul>
-						<form v-on:submit.prevent="addTodo(newTodo)">
+						<form v-on:submit.prevent="addTodo(newTodo)" class="mt-2">
 							<div class="form-group">
 								<input type="text" class="form-control" placeholder="add" v-model="newTodo.title" />
 							</div>
