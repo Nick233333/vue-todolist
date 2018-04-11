@@ -2,28 +2,44 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Vue tosolist</title>
+	<title>My todolist</title>
 	<link href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+	<style>
+		.list-group {
+            height: 400px;
+            overflow-y: auto;
+        }
+	</style>
 </head>
 <body>
 	<div class="container mt-2" id="app">
 		<div class="row">
 			<div class="col-md-8 offset-md-2">
 				<div class="card">
-					<div class="card-header bg-primary text-white"><h1>Vue todolist</h1></div>
+					<div class="card-header bg-primary text-white"><h1>My todolist</h1></div>
 					<div class="card-body">
-						
-						<ul class="list-group">
-							<li class="list-group-item" v-for="todo in todos">{{ todo.title }}</li>
-						</ul>
 						<form v-on:submit.prevent="addTodo(newTodo)" class="mt-2">
-							<div class="form-group">
-								<input type="text" class="form-control" placeholder="add" v-model="newTodo.title" />
+							<div class="form-row">
+								<div class="col-8">
+									<input type="text" class="form-control" placeholder="title" v-model="newTodo.title" />
+								</div>
+								<div class="col-4">
+									<input type="date" maxlength="8" class="form-control" placeholder="date" v-model="newTodo.date" />
+								</div>
 							</div>
-							<div class="form-group">
+						
+							<div class="form-group mt-2">
 								<button type="submit" class="btn btn-success btn-block">submit</button>
 							</div>
 						</form>
+						<ul class="list-group">
+							<li class="list-group-item" v-for="(todo, index) in todos">
+								{{ index + 1}}、{{ todo.title }} {{ todo.date }}
+								<button v-on:click="deleteTodo(todo)" type="button" class="close text-danger" aria-label="Close">
+  									<span aria-hidden="true">&times;</span>
+  								</button>
+  							</li>
+						</ul>
 					</div>
 				</div>
 			</div>
@@ -34,16 +50,27 @@
 		new Vue({
 			el: '#app',
 			data: {
-				message: 'hello world',
-				todos: [
-					{id: 1, title: 'vue todo'}
-				],
-				newTodo: {id: null, title: ''}
+				todos: [],
+				newTodo: {id: null, title: '', date: ''}
 			},
 			methods: {
 				addTodo(newTodo) {
+					if (!newTodo.title) {
+						return false;
+					}
+					if (!newTodo.date) {
+						let date = new Date();
+						let month = date.getMonth().toString();
+						if (month < 10) {
+							month = '0' + month;
+						}
+						newTodo.date = `${date.getFullYear().toString()}-${month}-${date.getDate().toString()}`;
+					}
 					this.todos.push(newTodo);
-					this.newTodo = {}
+					this.newTodo = {};
+				},
+				deleteTodo(todo) {
+					this.todos.splice(todo, 1);
 				}
 			}
 		});
