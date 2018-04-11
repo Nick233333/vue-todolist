@@ -3,41 +3,56 @@
 <head>
 	<meta charset="UTF-8">
 	<title>My todolist</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" >
 	<link href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
 	<style>
 		.list-group {
             height: 400px;
             overflow-y: auto;
         }
+        [v-cloak] { display: none } 
 	</style>
 </head>
 <body>
 	<div class="container mt-2" id="app">
 		<div class="row">
-			<div class="col-md-8 offset-md-2">
+			<div class="col-md-10 offset-md-1">
 				<div class="card">
-					<div class="card-header bg-primary text-white"><h1>My todolist</h1></div>
+					<div class="card-header bg-primary text-white"><h3>My todolist<span class="badge badge-secondary float-right">{{ count }}</span></h3></div>
 					<div class="card-body">
 						<form v-on:submit.prevent="addTodo(newTodo)" class="mt-2">
 							<div class="form-row">
 								<div class="col-8">
-									<input type="text" class="form-control" placeholder="title" v-model="newTodo.title" />
+									<input type="text" class="form-control" placeholder="todo title" v-model="newTodo.title" required="" />
 								</div>
 								<div class="col-4">
-									<input type="date" maxlength="8" class="form-control" placeholder="date" v-model="newTodo.date" />
+									<input type="date" class="form-control" v-model.trim="newTodo.date" />
 								</div>
 							</div>
 						
 							<div class="form-group mt-2">
-								<button type="submit" class="btn btn-success btn-block">submit</button>
+								<button type="submit" class="btn btn-success btn-block">Add todo</button>
 							</div>
 						</form>
 						<ul class="list-group">
 							<li class="list-group-item" v-for="(todo, index) in todos">
-								{{ index + 1}}、{{ todo.title }} {{ todo.date }}
-								<button v-on:click="deleteTodo(todo)" type="button" class="close text-danger" aria-label="Close">
-  									<span aria-hidden="true">&times;</span>
-  								</button>
+								<div v-if="todo.completed">
+									<del>{{ index + 1}}、{{ todo.title }} -- {{ todo.date }}</del>
+									<button v-on:click="deleteTodo(index)" type="button" class="btn btn-sm btn-danger float-right" aria-label="Close">
+  										<span aria-hidden="true">&times;</span>
+  									</button>
+  									<button v-on:click="updateTodo(todo)" type="button" class="btn btn-sm btn-warning text-white float-right mr-2">
+  										<span aria-hidden="true">{{ todo.completed ? '未完成' : '已完成' }}</span>
+  									</button>
+  								</div>
+								<div v-else>{{ index + 1}}、{{ todo.title }} -- {{ todo.date }}
+									<button v-on:click="deleteTodo(index)" type="button" class="btn btn-sm btn-danger float-right" aria-label="Close">
+  										<span aria-hidden="true">&times;</span>
+  									</button>
+									<button v-on:click="updateTodo(todo)" type="button" class="btn btn-sm btn-success text-white float-right mr-2">
+  										<span aria-hidden="true">{{ todo.completed ? '未完成' : '已完成' }}</span>
+  									</button>
+  								</div>
   							</li>
 						</ul>
 					</div>
@@ -51,13 +66,22 @@
 			el: '#app',
 			data: {
 				todos: [],
-				newTodo: {id: null, title: '', date: ''}
+				newTodo: {id: null, title: '', date: '', completed: false}
+			},
+			computed: {
+				count() {
+					if (this.todos.length === 0) {
+						return;
+					}
+					return this.todos.length;
+				}
 			},
 			methods: {
 				addTodo(newTodo) {
-					if (!newTodo.title) {
+					if (newTodo.title === ' ') {
 						return false;
 					}
+					newTodo.completed = false;
 					if (!newTodo.date) {
 						let date = new Date();
 						let month = date.getMonth().toString();
@@ -67,13 +91,18 @@
 						newTodo.date = `${date.getFullYear().toString()}-${month}-${date.getDate().toString()}`;
 					}
 					this.todos.push(newTodo);
-					this.newTodo = {};
+					this.newTodo = {id: null, title: '', date: '', completed: false};
 				},
-				deleteTodo(todo) {
-					this.todos.splice(todo, 1);
+				deleteTodo(index) {
+					this.todos.splice(index, 1);
+				},
+				updateTodo(todo) {
+					console.log(todo);
+					todo.completed = !todo.completed;
 				}
 			}
 		});
+		
 	</script>
 </body>
 </html>
