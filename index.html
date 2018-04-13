@@ -29,7 +29,7 @@
 						<form v-on:submit.prevent="addTodo(newTodo)" class="mt-2">
 							<div class="form-row">
 								<div class="col-8">
-									<input type="text" class="form-control" placeholder="todo title" v-model="newTodo.title" required="" />
+									<input ref="myInput" type="text" class="form-control" placeholder="todo title" v-model="newTodo.title" required="" />
 								</div>
 								<div class="col-4">
 									<input type="date" class="form-control" v-model.trim="newTodo.date" />
@@ -135,7 +135,7 @@
 			},
 			methods: {
 				addTodo(newTodo) {
-					if (newTodo.title === ' ') {
+					if (newTodo.title.trim() === '') {
 						return;
 					}
 					newTodo.completed = false;
@@ -150,6 +150,7 @@
 					}
 					this.todos.push(newTodo);
 					this.newTodo = {id: null, title: '', date: '', completed: false};
+					this.$refs.myInput.focus();
 				},
 				deleteTodo(index) {
 					this.todos.splice(index, 1);
