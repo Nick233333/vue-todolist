@@ -79,7 +79,7 @@
 			methods: {
 				addTodo(newTodo) {
 					if (newTodo.title === ' ') {
-						return false;
+						return;
 					}
 					newTodo.completed = false;
 					if (!newTodo.date) {
