@@ -62,11 +62,33 @@
 	</div>
 	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 	<script>
+		const STORAGE_KEY = 'vue-todolist'
+		let todoStorage = {
+			fetch: function () {
+			var todos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+			todos.forEach(function (todo, index) {
+				todo.id = index;
+			})
+			return todos;
+			},
+			save: function (todos) {
+				localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+			}
+		};
 		new Vue({
 			el: '#app',
 			data: {
-				todos: [],
-				newTodo: {id: null, title: '', date: '', completed: false}
+				todos: todoStorage.fetch(),
+				newTodo: {id: null, title: '', date: '', completed: false},
+				num: 1,
+			},
+			watch: {
+				todos: {
+					handler: function (todos) {
+					todoStorage.save(todos)
+				},
+				deep: true
+				}
 			},
 			computed: {
 				count() {
@@ -82,6 +104,7 @@
 						return;
 					}
 					newTodo.completed = false;
+					newTodo.id = this.num++;
 					if (!newTodo.date) {
 						let date = new Date();
 						let month = date.getMonth().toString();
