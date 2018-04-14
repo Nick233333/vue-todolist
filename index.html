@@ -40,27 +40,7 @@
 								<button type="submit" class="btn btn-success btn-block">Add todo</button>
 							</div>
 						</form>
-						<ul class="list-group">
-							<li class="list-group-item" v-for="(todo, index) in todos">
-								<div v-if="todo.completed">
-									<del>{{ todo.title }} -- {{ todo.date }}</del>
-									<button v-on:click="deleteTodo(index)" type="button" class="btn btn-sm btn-danger float-right" aria-label="Close">
-  										<span aria-hidden="true">&times;</span>
-  									</button>
-  									<button v-on:click="updateTodo(todo)" type="button" class="btn btn-sm btn-success text-white float-right mr-2">
-  										<span aria-hidden="true">{{ todo.completed ? '已完成' : '未完成' }}</span>
-  									</button>
-  								</div>
-								<div v-else>{{ todo.title }} -- {{ todo.date }}
-									<button v-on:click="deleteTodo(index)" type="button" class="btn btn-sm btn-danger float-right" aria-label="Close">
-  										<span aria-hidden="true">&times;</span>
-  									</button>
-									<button v-on:click="updateTodo(todo)" type="button" class="btn btn-sm btn-warning text-white float-right mr-2">
-  										<span aria-hidden="true">{{ todo.completed ? '已完成' : '未完成' }}</span>
-  									</button>
-  								</div>
-  							</li>
-						</ul>
+						<todo-items :todos="todos"></todo-items>
 					</div>
 					<div class="card-footer text-muted">
 						<div class="d-flex justify-content-between">
@@ -83,7 +63,42 @@
 
 	<script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
 	<script type="text/javascript" color="0,0,255" opacity='0.7' zIndex="-2" count="99" src="https://cdn.bootcss.com/canvas-nest.js/1.0.1/canvas-nest.min.js"></script>
+	<script type="text/x-template" id="todo-items-list">
+		<ul class="list-group">
+			<li class="list-group-item" v-for="(todo, index) in todos">
+				<div v-if="todo.completed">
+					<del>{{ todo.title }} -- {{ todo.date }}</del>
+					<button v-on:click="deleteTodo(index)" type="button" class="btn btn-sm btn-danger float-right" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<button v-on:click="updateTodo(todo)" type="button" class="btn btn-sm btn-success text-white float-right mr-2">
+							<span aria-hidden="true">{{ todo.completed ? '已完成' : '未完成' }}</span>
+						</button>
+					</div>
+				<div v-else>{{ todo.title }} -- {{ todo.date }}
+					<button v-on:click="deleteTodo(index)" type="button" class="btn btn-sm btn-danger float-right" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					<button v-on:click="updateTodo(todo)" type="button" class="btn btn-sm btn-warning text-white float-right mr-2">
+							<span aria-hidden="true">{{ todo.completed ? '已完成' : '未完成' }}</span>
+						</button>
+					</div>
+				</li>
+		</ul>
+	</script>
 	<script>
+		Vue.component('todo-items', {
+			template: '#todo-items-list',
+			props: ['todos'],
+			methods: {
+				deleteTodo(index) {
+					this.todos.splice(index, 1);
+				},
+				updateTodo(todo) {
+					todo.completed = !todo.completed;
+				}
+			}
+		});
 		const STORAGE_KEY = 'vue-todolist';
 		let todoStorage = {
 			fetch() {
@@ -151,12 +166,6 @@
 					this.todos.push(newTodo);
 					this.newTodo = {id: null, title: '', date: '', completed: false};
 					this.$refs.myInput.focus();
-				},
-				deleteTodo(index) {
-					this.todos.splice(index, 1);
-				},
-				updateTodo(todo) {
-					todo.completed = !todo.completed;
 				},
 				clear() {
 					this.todos = [];
