@@ -26,20 +26,7 @@
 						<h3>My todolist<span class="badge badge-secondary float-right">{{ count }}</span></h3>
 					</div>
 					<div class="card-body">
-						<form v-on:submit.prevent="addTodo(newTodo)" class="mt-2">
-							<div class="form-row">
-								<div class="col-8">
-									<input ref="myInput" type="text" class="form-control" placeholder="todo title" v-model="newTodo.title" required="" />
-								</div>
-								<div class="col-4">
-									<input type="date" class="form-control" v-model.trim="newTodo.date" />
-								</div>
-							</div>
-						
-							<div class="form-group mt-2">
-								<button type="submit" class="btn btn-success btn-block">Add todo</button>
-							</div>
-						</form>
+						<todo-form :todos="todos"></todo-form>
 						<todo-items :todos="todos"></todo-items>
 					</div>
 					<div class="card-footer text-muted">
@@ -69,22 +56,38 @@
 				<div v-if="todo.completed">
 					<del>{{ todo.title }} -- {{ todo.date }}</del>
 					<button v-on:click="deleteTodo(index)" type="button" class="btn btn-sm btn-danger float-right" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-						<button v-on:click="updateTodo(todo)" type="button" class="btn btn-sm btn-success text-white float-right mr-2">
-							<span aria-hidden="true">{{ todo.completed ? '已完成' : '未完成' }}</span>
-						</button>
-					</div>
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<button v-on:click="updateTodo(todo)" type="button" class="btn btn-sm btn-success text-white float-right mr-2">
+						<span aria-hidden="true">{{ todo.completed ? '已完成' : '未完成' }}</span>
+					</button>
+				</div>
 				<div v-else>{{ todo.title }} -- {{ todo.date }}
 					<button v-on:click="deleteTodo(index)" type="button" class="btn btn-sm btn-danger float-right" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
+						<span aria-hidden="true">&times;</span>
+					</button>
 					<button v-on:click="updateTodo(todo)" type="button" class="btn btn-sm btn-warning text-white float-right mr-2">
-							<span aria-hidden="true">{{ todo.completed ? '已完成' : '未完成' }}</span>
-						</button>
-					</div>
-				</li>
+						<span aria-hidden="true">{{ todo.completed ? '已完成' : '未完成' }}</span>
+					</button>
+				</div>
+			</li>
 		</ul>
+	</script>
+	<script type="text/x-template" id="todo-form-template">
+		<form v-on:submit.prevent="addTodo(newTodo)" class="mt-2">
+			<div class="form-row">
+				<div class="col-8">
+					<input ref="myInput" type="text" class="form-control" placeholder="todo title" v-model="newTodo.title" required="" />
+				</div>
+				<div class="col-4">
+					<input type="date" class="form-control" v-model.trim="newTodo.date" />
+				</div>
+			</div>
+		
+			<div class="form-group mt-2">
+				<button type="submit" class="btn btn-success btn-block">Add todo</button>
+			</div>
+		</form>
 	</script>
 	<script>
 		Vue.component('todo-items', {
@@ -96,6 +99,35 @@
 				},
 				updateTodo(todo) {
 					todo.completed = !todo.completed;
+				}
+			}
+		});
+		Vue.component('todo-form', {
+			template: '#todo-form-template',
+			props: ['todos'],
+			data() {
+				return {
+					newTodo: {id: null, title: '', date: '', completed: false}
+				}
+			},
+			methods: {
+				addTodo(newTodo) {
+					if (newTodo.title.trim() === '') {
+						return;
+					}
+					newTodo.completed = false;
+					newTodo.id = this.num++;
+					if (!newTodo.date) {
+						let date = new Date();
+						let month = date.getMonth().toString();
+						if (month < 10) {
+							month = '0' + month;
+						}
+						newTodo.date = `${date.getFullYear().toString()}-${month}-${date.getDate().toString()}`;
+					}
+					this.todos.push(newTodo);
+					this.newTodo = {id: null, title: '', date: '', completed: false};
+					this.$refs.myInput.focus();
 				}
 			}
 		});
@@ -119,7 +151,6 @@
 			el: '#app',
 			data: {
 				todos: todoStorage.fetch(),
-				newTodo: {id: null, title: '', date: '', completed: false},
 				num: 1,
 			},
 			watch: {
@@ -149,24 +180,6 @@
 				}
 			},
 			methods: {
-				addTodo(newTodo) {
-					if (newTodo.title.trim() === '') {
-						return;
-					}
-					newTodo.completed = false;
-					newTodo.id = this.num++;
-					if (!newTodo.date) {
-						let date = new Date();
-						let month = date.getMonth().toString();
-						if (month < 10) {
-							month = '0' + month;
-						}
-						newTodo.date = `${date.getFullYear().toString()}-${month}-${date.getDate().toString()}`;
-					}
-					this.todos.push(newTodo);
-					this.newTodo = {id: null, title: '', date: '', completed: false};
-					this.$refs.myInput.focus();
-				},
 				clear() {
 					this.todos = [];
 					todoStorage.clear();
