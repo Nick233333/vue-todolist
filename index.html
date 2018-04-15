@@ -30,11 +30,7 @@
 						<todo-items :todos="todos"></todo-items>
 					</div>
 					<div class="card-footer text-muted">
-						<div class="d-flex justify-content-between">
-							<span class="float-left">已完成 {{ completed }}</span>
-							<button class="btn btn-danger btn-sm w-25" @click="clear()">清空</button>
-							<span class="float-right">未完成 {{ uncompleted }}</span>
-						</div>
+						<todo-footer :todos="todos"></todo-footer>	
 					</div>
 				</div>
 			</div>
@@ -87,6 +83,13 @@
 			</div>
 		</form>
 	</script>
+	<script type="text/x-template" id="todo-footer-template">
+		<div class="d-flex justify-content-between">
+			<span class="float-left">已完成 {{ completed }}</span>
+			<button class="btn btn-danger btn-sm w-25" @click="clear()">清空</button>
+			<span class="float-right">未完成 {{ uncompleted }}</span>
+		</div>
+	</script>
 	<script>
 		Vue.component('todo-items', {
 			template: '#todo-items-list',
@@ -129,6 +132,28 @@
 				}
 			}
 		});
+		Vue.component('todo-footer', {
+			template: '#todo-footer-template',
+			props: ['todos'],
+			computed: {
+				uncompleted() {
+					return this.todos.filter((todo) => {
+						return todo.completed === false;
+					}).length;
+				},
+				completed() {
+					return this.todos.filter((todo) => {
+						return todo.completed === true;
+					}).length;
+				}
+			},
+			methods: {
+				clear() {
+					this.todos = [];
+					todoStorage.clear();
+				}
+			}
+		});
 		const STORAGE_KEY = 'vue-todolist';
 		let todoStorage = {
 			fetch() {
@@ -154,9 +179,9 @@
 			watch: {
 				todos: {
 					handler: function (todos) {
-					todoStorage.save(todos)
+					todoStorage.save(todos);
 				},
-				deep: true
+				deep: true,
 				}
 			},
 			computed: {
@@ -165,22 +190,6 @@
 						return;
 					}
 					return this.todos.length;
-				},
-				uncompleted() {
-					return this.todos.filter((todo) => {
-						return todo.completed === false;
-					}).length;
-				},
-				completed() {
-					return this.todos.filter((todo) => {
-						return todo.completed === true;
-					}).length;
-				}
-			},
-			methods: {
-				clear() {
-					this.todos = [];
-					todoStorage.clear();
 				}
 			}
 		});
