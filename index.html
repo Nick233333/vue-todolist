@@ -123,6 +123,7 @@
 			props: ['todos'],
 			data() {
 				return {
+					num: 1,
 					newTodo: {id: null, title: '', date: '', completed: false}
 				}
 			},
@@ -164,16 +165,19 @@
 			},
 			methods: {
 				clear(todos) {
-					this.todos.splice(todos, todos.length);
 					todoStorage.clear();
+					this.todos.splice(todos, todos.length);
 				}
 			}
 		});
 		const STORAGE_KEY = 'vue-todolist';
 		let todoStorage = {
 			fetch() {
-				var todos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-				todos.forEach(function (todo, index) {
+				let todos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+				if (todos.length === 0) {
+					return [];
+				}
+				todos.forEach((todo, index) => {
 					todo.id = index;
 				})
 				return todos;
@@ -185,15 +189,15 @@
 				localStorage.removeItem(STORAGE_KEY);
 			}
 		};
+
 		new Vue({
 			el: '#app',
 			data: {
 				todos: todoStorage.fetch(),
-				num: 1,
 			},
 			watch: {
 				todos: {
-					handler: function (todos) {
+					handler(todos) {
 					todoStorage.save(todos);
 				},
 				deep: true,
