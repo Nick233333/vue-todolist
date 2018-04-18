@@ -56,7 +56,7 @@
 					<button v-on:click="deleteTodo(index)" type="button" class="btn btn-sm btn-danger float-right" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
-					<button v-on:click="updateTodo(todo)" type="button" class="btn btn-sm btn-success text-white float-right mr-2">
+					<button v-on:click="toggleTodo(todo)" type="button" class="btn btn-sm btn-success text-white float-right mr-2">
 						<span aria-hidden="true">{{ todo.completed ? '已完成' : '未完成' }}</span>
 					</button>
 				</div>
@@ -64,7 +64,7 @@
 					<button v-on:click="deleteTodo(index)" type="button" class="btn btn-sm btn-danger float-right" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
-					<button v-on:click="updateTodo(todo)" type="button" class="btn btn-sm btn-warning text-white float-right mr-2">
+					<button v-on:click="toggleTodo(todo)" type="button" class="btn btn-sm btn-warning text-white float-right mr-2">
 						<span aria-hidden="true">{{ todo.completed ? '已完成' : '未完成' }}</span>
 					</button>
 				</div>
@@ -88,9 +88,9 @@
 	</script>
 	<script type="text/x-template" id="todo-footer-template">
 		<div class="d-flex justify-content-between">
-			<span class="float-left">已完成 {{ completed }}</span>
+			<div class="float-left">已完成 &nbsp;{{ completed }}</div>
 			<button class="btn btn-danger btn-sm w-25" @click="clear()">清空</button>
-			<span class="float-right">未完成 {{ uncompleted }}</span>
+			<div class="float-right">未完成 &nbsp;{{ uncompleted }}</div>
 		</div>
 	</script>
 	<script>
@@ -113,7 +113,7 @@
 				deleteTodo(index) {
 					this.todos.splice(index, 1);
 				},
-				updateTodo(todo) {
+				toggleTodo(todo) {
 					todo.completed = !todo.completed;
 				}
 			}
